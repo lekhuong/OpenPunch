@@ -1,0 +1,25 @@
+{
+ "base_value": 372.98184133662744,
+ "mean_abs": {
+  "d_mm": 148.08,
+  "C_mm": 55.4,
+  "sqrt_fc": 46.66,
+  "rho_percent": 37.96,
+  "a_over_d": 24.29,
+  "Opening_Size_mm": 12.54,
+  "Opening_Dist_mm": 21.76
+ },
+ "d_shap_max": 1437.2445285878237,
+ "dop_min_openings": -81.13218061596582,
+ "dop_meanabs_openings": 25.06468456216407,
+ "sop_meanabs_openings": 45.77030398041243,
+ "meanabs_openings": {
+  "d_mm": 108.62,
+  "C_mm": 51.39,
+  "sqrt_fc": 26.64,
+  "rho_percent": 31.74,
+  "a_over_d": 20.62,
+  "Opening_Size_mm": 25.06,
+  "Opening_Dist_mm": 45.77
+ }
+}
