@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenPunch – punching shear of flat slabs with openings</title>
+<meta name="description" content="CatBoost prediction of the punching shear capacity of reinforced concrete flat slabs with and without openings.">
+<style>
+:root{
+  --bg:#ffffff; --panel:#f6f8fa; --line:#d8dee4; --text:#1f2328; --muted:#59636e;
+  --accent:#0969da; --accent-ink:#ffffff; --ok-bg:#dafbe1; --ok-line:#4ac26b; --ok-ink:#116329;
+  --warn-bg:#fff8c5; --warn-line:#d4a72c; --warn-ink:#7d4e00; --bad-bg:#ffebe9; --bad-line:#ff8182; --bad-ink:#a40e26;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#0d1117; --panel:#161b22; --line:#30363d; --text:#e6edf3; --muted:#9198a1;
+    --accent:#4493f8; --accent-ink:#0d1117; --ok-bg:#12261e; --ok-line:#2ea043; --ok-ink:#7ee2a8;
+    --warn-bg:#272115; --warn-line:#9e6a03; --warn-ink:#e3b341; --bad-bg:#25171c; --bad-line:#da3633; --bad-ink:#ff9492; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 16px 48px}
+h1{font-size:30px;margin:0 0 4px;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 18px;max-width:880px}
+.grid{display:grid;grid-template-columns:330px 1fr;gap:22px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px}
+.card h2{font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 12px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:block;font-size:13px;color:var(--muted);margin:0 0 3px}
+input,select{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--text);font:inherit}
+input:focus,select:focus{outline:2px solid var(--accent);outline-offset:0;border-color:transparent}
+.field{margin-bottom:10px}
+.derived{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.7}
+.derived b{color:var(--text);font-weight:600}
+.hide{display:none}
+.result{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-end;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:14px}
+.big{font-size:44px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.big small{font-size:16px;font-weight:500;color:var(--muted);margin-left:4px}
+.kv{font-size:13px;color:var(--muted)}
+.kv b{display:block;font-size:22px;color:var(--text);font-variant-numeric:tabular-nums}
+table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+th{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+td.n{text-align:right}
+.tag{display:inline-block;white-space:nowrap;padding:1px 8px;border-radius:999px;font-size:12px;border:1px solid}
+.tag.ok{background:var(--ok-bg);border-color:var(--ok-line);color:var(--ok-ink)}
+.tag.na{background:transparent;border-color:var(--line);color:var(--muted)}
+.tag.bad{background:var(--bad-bg);border-color:var(--bad-line);color:var(--bad-ink)}
+.note{border:1px solid;border-radius:6px;padding:10px 12px;font-size:13.5px;margin:14px 0 0}
+.note.warn{background:var(--warn-bg);border-color:var(--warn-line);color:var(--warn-ink)}
+.note.ok{background:var(--ok-bg);border-color:var(--ok-line);color:var(--ok-ink)}
+.note.bad{background:var(--bad-bg);border-color:var(--bad-line);color:var(--bad-ink)}
+details{margin-top:16px;font-size:14px}
+summary{cursor:pointer;font-weight:600}
+details p,details li{color:var(--muted)}
+footer{margin-top:28px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+a{color:var(--accent)}
+.tablewrap{overflow-x:auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>OpenPunch</h1>
+  <p class="sub">Prediction of the punching shear capacity of reinforced concrete flat slabs with and without openings, using the optimized CatBoost model trained on 744 punching tests (185 slabs with openings). The calculation runs in your browser.</p>
+
+  <div class="grid">
+    <form class="card" id="f" autocomplete="off" onsubmit="return false">
+      <h2>Input case</h2>
+      <div class="row">
+        <div class="field"><label for="h">Slab thickness h (mm)</label><input id="h" type="number" step="any" value="160"></div>
+        <div class="field"><label for="cover">Cover to reinforcement centroid (mm)</label><input id="cover" type="number" step="any" value="25"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="a">Shear span a (mm)</label><input id="a" type="number" step="any" value="850"></div>
+        <div class="field"><label for="c">Column dimension c (mm)</label><input id="c" type="number" step="any" value="200"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="fc">f′c (MPa)</label><input id="fc" type="number" step="any" value="30"></div>
+        <div class="field"><label for="rho">ρ (%)</label><input id="rho" type="number" step="any" value="1.2"></div>
+      </div>
+      <div class="field"><label for="case">Slab type</label>
+        <select id="case"><option value="open" selected>Slab with opening</option><option value="solid">Solid slab / no opening</option></select>
+      </div>
+      <div class="row" id="openFields">
+        <div class="field"><label for="dop">Opening size D<sub>op</sub> (mm)</label><input id="dop" type="number" step="any" value="200"></div>
+        <div class="field"><label for="sop">Distance to column face S<sub>op</sub> (mm)</label><input id="sop" type="number" step="any" value="100"></div>
+      </div>
+      <div class="derived" id="derived"></div>
+    </form>
+
+    <section class="card" aria-live="polite">
+      <h2>Prediction</h2>
+      <div class="result">
+        <div><div class="kv">Punching shear capacity V<sub>u</sub></div><div class="big" id="vu">–<small>kN</small></div></div>
+        <div class="kv">Effective depth d<b id="dOut">–</b></div>
+        <div class="kv">a/d<b id="adOut">–</b></div>
+      </div>
+      <h2>Applicability check</h2>
+      <div class="tablewrap">
+      <table>
+        <thead><tr><th>Variable</th><th class="n">Value</th><th class="n">Database min</th><th class="n">Database max</th><th>Status</th></tr></thead>
+        <tbody id="tb"></tbody>
+      </table>
+      </div>
+      <div id="msg"></div>
+      <div class="note warn">Research and preliminary-assessment tool. Predictions are data-driven, are reliable only within the range of the experimental database, and do not replace code-based design verification.</div>
+
+      <details>
+        <summary>Model and inputs</summary>
+        <ul>
+          <li>Model: CatBoost regressor (1200 trees, depth 6), optimized by Bayesian search on 10-fold cross-validation MAE.</li>
+          <li>Held-out test performance (149 specimens): R² = 0.963, RMSE = 61.97 kN, MAE = 34.70 kN, MAPE = 12.83%; for the 44 test slabs with openings R² = 0.890, MAPE = 18.6%.</li>
+          <li>Inputs sent to the model: d = h − cover, c, √f′c, ρ, a/d, D<sub>op</sub> and S<sub>op</sub>. A slab without openings is encoded as D<sub>op</sub> = 0, S<sub>op</sub> = 1000 mm, as in the training data.</li>
+          <li>Circular columns: use the side of the square column of equal perimeter, c = πD/4.</li>
+          <li>D<sub>op</sub> is the opening size; S<sub>op</sub> is the clear distance from the column face to the nearest edge of the opening (0 for an opening adjacent to the column).</li>
+        </ul>
+      </details>
+    </section>
+  </div>
+
+  <footer>
+    Accompanies the manuscript “Prediction of punching shear strength of reinforced concrete flat slabs with openings using ensemble machine learning” (H.Q. Nguyen, X.H. Nguyen, Q.S. Nguyen, D.D. Le, N.K. Le). Model, data and code: <a id="repo" href="https://github.com/lekhuong/OpenPunch">github.com/lekhuong/OpenPunch</a>.
+  </footer>
+</div>
+
+<script src="model.js"></script>
+<script>
+function predict(model, x){let s=0;for(const t of model.trees){let i=0;for(let k=0;k<t.s.length;k++)if(Math.fround(x[t.s[k][0]])>t.s[k][1])i|=(1<<k);s+=t.v[i];}return model.scale*s+model.bias;}
+const RANGES={d:[30,500],c:[40.06,1000],sqrt_fc:[2.943,10.895],rho:[0.22,3.73],ad:[0.625,13.55],Dop:[0,700],Sop:[0,450]};
+const LABELS={d:['Effective depth d','mm'],c:['Column dimension c','mm'],sqrt_fc:['√f′c','√MPa'],rho:['ρ','%'],ad:['a/d','–'],Dop:['Opening size D<sub>op</sub>','mm'],Sop:['Distance S<sub>op</sub>','mm']};
+const $=id=>document.getElementById(id);
+const fmt=(v,n=2)=>Number.isFinite(v)?v.toLocaleString('en-US',{minimumFractionDigits:n,maximumFractionDigits:n}):'–';
+function run(){
+  const h=+$('h').value, cover=+$('cover').value, a=+$('a').value, c=+$('c').value, fc=+$('fc').value, rho=+$('rho').value;
+  const solid=$('case').value==='solid';
+  $('openFields').classList.toggle('hide',solid);
+  const Dop=solid?0:+$('dop').value, Sop=solid?1000:+$('sop').value;
+  const d=h-cover, ad=a/d, sq=Math.sqrt(fc);
+  const valid=[h,cover,a,c,fc,rho,Dop,Sop].every(Number.isFinite)&&d>0&&fc>0&&c>0&&a>0&&rho>0&&Dop>=0&&Sop>=0&&(solid||Dop>0);
+  $('derived').innerHTML=valid?`<b>d</b> = ${fmt(d,1)} mm · <b>a/d</b> = ${fmt(ad,3)} · <b>√f′c</b> = ${fmt(sq,3)}<br><b>Model inputs</b>: D<sub>op</sub> = ${fmt(Dop,0)} mm, S<sub>op</sub> = ${fmt(Sop,0)} mm`:'';
+  const vals={d,c,sqrt_fc:sq,rho,ad,Dop,Sop}; let out=[]; let rows='';
+  for(const k of Object.keys(RANGES)){
+    const [lo,hi]=RANGES[k]; let st;
+    if(k==='Sop'&&solid) st='<span class="tag na">solid-slab code</span>';
+    else if(!Number.isFinite(vals[k])) st='<span class="tag bad">invalid</span>';
+    else if(vals[k]<lo||vals[k]>hi){st='<span class="tag bad">outside range</span>';out.push(LABELS[k][0]);}
+    else st='<span class="tag ok">within range</span>';
+    rows+=`<tr><td>${LABELS[k][0]} (${LABELS[k][1]})</td><td class="n">${fmt(vals[k],3)}</td><td class="n">${fmt(lo,3)}</td><td class="n">${fmt(hi,3)}</td><td>${st}</td></tr>`;
+  }
+  $('tb').innerHTML=rows;
+  if(!valid){$('vu').innerHTML='–<small>kN</small>';$('dOut').textContent='–';$('adOut').textContent='–';
+    $('msg').innerHTML='<div class="note bad">Check the inputs: all values must be positive, h must exceed the cover, and a slab with an opening needs D<sub>op</sub> &gt; 0.</div>';return;}
+  const x=[d,c,sq,rho,ad,Dop,Sop];
+  const v=Math.max(predict(window.OPENPUNCH_MODEL,x),0);
+  $('vu').innerHTML=`${fmt(v,1)}<small>kN</small>`; $('dOut').textContent=`${fmt(d,1)} mm`; $('adOut').textContent=fmt(ad,3);
+  $('msg').innerHTML=out.length?`<div class="note bad"><b>Outside the database range:</b> ${out.join(', ')}. The prediction is an extrapolation and should be treated with caution.</div>`
+    :'<div class="note ok"><b>Within the range of the database.</b> All model inputs lie inside the ranges of the 744 tests used for training and testing.</div>';
+}
+document.querySelectorAll('#f input,#f select').forEach(e=>e.addEventListener('input',run));
+run();
+</script>
+</body>
+</html>
