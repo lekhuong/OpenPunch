@@ -62,3 +62,8 @@ python figs23.py        # Figs. 2 and 3
 ## Use and limitations
 
 The model is intended for research and preliminary assessment within the range of the database. It does not replace code-based design verification.
+
+## License
+
+- Code (web application, Streamlit app and analysis scripts): MIT License, see `LICENSE`.
+- Data (`data/`) and the trained model: Creative Commons Attribution 4.0 International (CC BY 4.0). The test results were compiled from the published experimental studies cited in the manuscript; please cite the manuscript and the original sources when using the database.
