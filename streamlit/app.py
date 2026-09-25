@@ -231,7 +231,8 @@ internally deriving the variables required by the optimized CatBoost model.
 
 st.markdown("""
 <div class="notice">
-<b>Research diagnostic.</b> Predictions are data-driven and should be interpreted within
+<b>Research diagnostic.</b> The maintained browser version of this tool, with the data and code, is at
+<a href="https://lekhuong.github.io/OpenPunch/">lekhuong.github.io/OpenPunch</a>. Predictions are data-driven and should be interpreted within
 the experimental domain used to train the model. The application is intended for research
 and preliminary assessment, not as a replacement for code-based design verification.
 </div>
