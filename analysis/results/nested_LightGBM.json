@@ -1,0 +1,106 @@
+{
+ "model": "LightGBM",
+ "form": "data",
+ "trials": 50,
+ "params": [
+  {
+   "n_estimators": 550,
+   "learning_rate": 0.13009646433488528,
+   "num_leaves": 53,
+   "max_depth": 5,
+   "min_child_samples": 6,
+   "subsample": 0.7226578276517637,
+   "colsample_bytree": 0.8928576889703673,
+   "reg_alpha": 8.448246240083892,
+   "reg_lambda": 0.127788819407583,
+   "subsample_freq": 1
+  },
+  {
+   "n_estimators": 850,
+   "learning_rate": 0.011055984583377775,
+   "num_leaves": 126,
+   "max_depth": 9,
+   "min_child_samples": 9,
+   "subsample": 0.6617064850428571,
+   "colsample_bytree": 0.6338598492671161,
+   "reg_alpha": 0.013935420141708748,
+   "reg_lambda": 0.2483440783448657,
+   "subsample_freq": 1
+  },
+  {
+   "n_estimators": 800,
+   "learning_rate": 0.13102372029553397,
+   "num_leaves": 33,
+   "max_depth": 5,
+   "min_child_samples": 5,
+   "subsample": 0.7498450432888507,
+   "colsample_bytree": 0.7420975178934944,
+   "reg_alpha": 0.03819579100935658,
+   "reg_lambda": 3.3969620574636186,
+   "subsample_freq": 1
+  },
+  {
+   "n_estimators": 400,
+   "learning_rate": 0.06349313979586425,
+   "num_leaves": 21,
+   "max_depth": 5,
+   "min_child_samples": 5,
+   "subsample": 0.6625257108629207,
+   "colsample_bytree": 0.7085086755833712,
+   "reg_alpha": 0.0023069386909170342,
+   "reg_lambda": 0.0051557567183886455,
+   "subsample_freq": 1
+  },
+  {
+   "n_estimators": 550,
+   "learning_rate": 0.05664640242079809,
+   "num_leaves": 33,
+   "max_depth": 4,
+   "min_child_samples": 5,
+   "subsample": 0.6216867258416837,
+   "colsample_bytree": 0.705442753428601,
+   "reg_alpha": 0.051771975469293456,
+   "reg_lambda": 0.04403344877704517,
+   "subsample_freq": 1
+  }
+ ],
+ "secs": 140.63501596450806,
+ "default_all": {
+  "R2": 0.8211855666657653,
+  "RMSE": 144.06690963954273,
+  "MAE": 76.84349308867729,
+  "MAPE": 25.560403910254138
+ },
+ "opt_all": {
+  "R2": 0.8692744839756401,
+  "RMSE": 123.18083319192436,
+  "MAE": 70.69009150442842,
+  "MAPE": 22.547263485667536
+ },
+ "opt_open": {
+  "R2": 0.6015898015509605,
+  "RMSE": 120.42554524343733,
+  "MAE": 70.97539465866939,
+  "MAPE": 34.836279016302385
+ },
+ "opt_solid": {
+  "R2": 0.8863582558892342,
+  "RMSE": 124.0824304536488,
+  "MAE": 70.59533192896238,
+  "MAPE": 18.4656335517942
+ },
+ "default_fold_MAE": [
+  83.95652180871436,
+  74.57324635634976,
+  102.01205523209369,
+  56.94179326263524,
+  65.32921051073498
+ ],
+ "opt_fold_MAE": [
+  69.57244319454244,
+  76.76145633076959,
+  101.06313379908103,
+  53.67837253683494,
+  52.53527540002686
+ ]
+}

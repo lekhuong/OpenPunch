@@ -1,0 +1,106 @@
+{
+ "model": "LightGBM",
+ "form": "ec2",
+ "trials": 50,
+ "params": [
+  {
+   "n_estimators": 200,
+   "learning_rate": 0.020012366958600373,
+   "num_leaves": 125,
+   "max_depth": 9,
+   "min_child_samples": 13,
+   "subsample": 0.6189354755301142,
+   "colsample_bytree": 0.7495229988961106,
+   "reg_alpha": 0.006241654791642783,
+   "reg_lambda": 0.002587900607374807,
+   "subsample_freq": 1
+  },
+  {
+   "n_estimators": 650,
+   "learning_rate": 0.0133273612380026,
+   "num_leaves": 128,
+   "max_depth": 11,
+   "min_child_samples": 14,
+   "subsample": 0.6841376856421229,
+   "colsample_bytree": 0.6224941807191633,
+   "reg_alpha": 0.009660198637515875,
+   "reg_lambda": 0.5238402026362412,
+   "subsample_freq": 1
+  },
+  {
+   "n_estimators": 650,
+   "learning_rate": 0.010433252139418371,
+   "num_leaves": 90,
+   "max_depth": 11,
+   "min_child_samples": 6,
+   "subsample": 0.706134239384086,
+   "colsample_bytree": 0.6631879119126987,
+   "reg_alpha": 0.002379995262916878,
+   "reg_lambda": 0.024578646336318295,
+   "subsample_freq": 1
+  },
+  {
+   "n_estimators": 250,
+   "learning_rate": 0.01056057163178761,
+   "num_leaves": 121,
+   "max_depth": 9,
+   "min_child_samples": 11,
+   "subsample": 0.6691547085406099,
+   "colsample_bytree": 0.6063841664696782,
+   "reg_alpha": 0.002126860344890761,
+   "reg_lambda": 0.11009070060815551,
+   "subsample_freq": 1
+  },
+  {
+   "n_estimators": 650,
+   "learning_rate": 0.011532437426358146,
+   "num_leaves": 87,
+   "max_depth": 8,
+   "min_child_samples": 7,
+   "subsample": 0.6018965162729228,
+   "colsample_bytree": 0.6774450871137663,
+   "reg_alpha": 0.04735915828059251,
+   "reg_lambda": 4.411275663898706,
+   "subsample_freq": 1
+  }
+ ],
+ "secs": 169.47545838356018,
+ "default_all": {
+  "R2": 0.9403326476939643,
+  "RMSE": 83.2206949814661,
+  "MAE": 51.879105737372946,
+  "MAPE": 16.891921971942573
+ },
+ "opt_all": {
+  "R2": 0.9324280348833631,
+  "RMSE": 88.56175811325298,
+  "MAE": 51.842801414458066,
+  "MAPE": 16.665207458032484
+ },
+ "opt_open": {
+  "R2": 0.8123455443707772,
+  "RMSE": 82.64809318556966,
+  "MAE": 51.740551242596354,
+  "MAPE": 25.14575093672598
+ },
+ "opt_solid": {
+  "R2": 0.9396270711665683,
+  "RMSE": 90.44039883767232,
+  "MAE": 51.87676242306564,
+  "MAPE": 13.848509893295862
+ },
+ "default_fold_MAE": [
+  57.729986622201515,
+  62.90135929997669,
+  55.72405881087522,
+  40.68832156763755,
+  41.41139753085955
+ ],
+ "opt_fold_MAE": [
+  55.24573754496903,
+  66.51521856606418,
+  51.24743398853414,
+  42.44468127453613,
+  43.30866702388487
+ ]
+}
