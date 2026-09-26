@@ -132,7 +132,7 @@ a{color:var(--accent)}
   </footer>
 </div>
 
-<script src="model.js"></script>
+<script src="model.js?v=2"></script>
 <script>
 function predict(model, x){let s=0;for(const t of model.trees){let i=0;for(let k=0;k<t.s.length;k++)if(Math.fround(x[t.s[k][0]])>t.s[k][1])i|=(1<<k);s+=t.v[i];}return model.scale*s+model.bias;}
 // Eurocode 2 control perimeter at 2d (straight sides and quarter circles) and the part shadowed by openings
