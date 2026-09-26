@@ -2,62 +2,68 @@
 
 This repository accompanies the manuscript
 
-> H.Q. Nguyen, X.H. Nguyen, Q.S. Nguyen, D.D. Le, N.K. Le. *Prediction of punching shear strength of reinforced concrete flat slabs with openings using ensemble machine learning.*
+> H.Q. Nguyen, X.H. Nguyen, Q.S. Nguyen, D.D. Le, N.K. Le. *Punching Shear Prediction for Slabs with Openings.*
 
-It contains the experimental database, the analysis scripts and results, the trained CatBoost model, and the web application.
+It contains the experimental database, the analysis scripts and results, the final model and the web application.
 
 **Web application:** https://lekhuong.github.io/OpenPunch/
 
-The web application runs entirely in the browser. It evaluates the exported CatBoost model (`model.js`), and its predictions are identical to the Python model for all 744 specimens.
+The application computes the Eurocode 2 punching resistance, with the control perimeter reduced for openings, and multiplies it by a correction factor predicted by a CatBoost model. The computation runs in the browser and reproduces the Python model exactly for all 742 tests.
 
 ## Contents
 
 | Path | Content |
 |---|---|
 | `index.html`, `model.js` | Web application (static; served by GitHub Pages) |
-| `data/Full_Merged_754_Samples.xlsx` | Compiled database of 754 tests: 232 specimens from test programmes on slabs with openings (195 with openings, 37 control slabs) and 522 solid slabs from the authors' earlier database |
-| `data/modelling_dataset_744.csv` | The 744 specimens used for modelling, with the model inputs, the train/test assignment and the code predictions used in the benchmark |
-| `analysis/` | Scripts for the full workflow (data preparation, six ensemble models with Bayesian optimization, code benchmark, figures, SHAP) |
-| `analysis/results/` | Metrics, best hyperparameters and specimen-level predictions of all six models |
-| `streamlit/` | Streamlit version of the application (`app.py`) and the trained model (`best_catboost_model.joblib`) |
+| `data/Full_Merged_754_Samples.xlsx` | Compiled database of 754 tests: 232 specimens from test programmes on slabs with openings and 522 slabs from the authors' earlier database |
+| `data/modelling_dataset_742.csv` | The 742 modelled tests, with the test-series assignment and the ACI 318-19 and Eurocode 2 resistances |
+| `analysis/` | Scripts for the whole workflow |
+| `analysis/results/` | Out-of-series predictions and metrics of all models, the benchmark, the opening-effect analysis and the final model |
 
 ## Modelling dataset
 
-- Ten specimens with two to four openings whose distance to the column was not reported are excluded. This leaves 744 specimens: 185 slabs with openings and 559 slabs without openings.
-- **Inputs:**
-  - effective depth *d* (mm);
-  - column dimension *c* (mm; circular columns are converted to the square of equal perimeter, *c* = π*D*/4);
-  - √*f*′c (√MPa);
-  - flexural reinforcement ratio *ρ* (%);
-  - shear span-to-depth ratio *a*/*d*;
-  - opening size *D*op (mm);
-  - clear distance from the column face to the opening *S*op (mm).
-- **Target:** measured punching shear capacity *V*u (kN).
-- **Slabs without openings,** including the control slabs, are encoded as *D*op = 0 and *S*op = 1000 mm.
-- **Split:** 80/20 random train/test split (seed 42), giving 595 training and 149 test specimens. The test subset contains 44 slabs with openings.
+- **Exclusions.** From the 754 tests, 10 multi-opening slabs without a reported opening distance were excluded, and 2 duplicate records were removed.
+- **Composition.** The resulting 742 tests comprise 185 slabs with openings, 36 control slabs and 521 slabs from the earlier database.
+- **Test series.** Every test belongs to a test series: consecutive specimens of the same source with the same set-up. Series with an identical set-up are merged, and specimens with identical inputs share a series. This gives 258 series, 18 of which contain slabs with openings.
+- **Inputs.**
+  - *d*, *c*, √*f*′c, *ρ*, *a*/*d*, *D*op and *S*op;
+  - for the Eurocode 2-informed model, also the ratio of the reduced to the full Eurocode 2 control perimeter.
+- **Target.** *V*u. The Eurocode 2-informed model predicts ln(*V*u / *V*R,c,EC2).
+- **Code resistances.** `analysis/codes_impl.py` computes ACI 318-19 and Eurocode 2 (EN 1992-1-1:2004) from the specimen variables, with mean strengths and no partial factors. Openings reduce the control perimeter by the part between the radial lines from the column centre tangent to each opening.
 
-## Results (held-out test subset)
+## Validation
 
-| Model | R² | RMSE (kN) | MAE (kN) | MAPE (%) |
-|---|---|---|---|---|
-| CatBoost (selected) | 0.963 | 61.97 | 34.70 | 12.83 |
-| GBRT | 0.966 | 58.96 | 37.20 | 13.82 |
-| XGBoost | 0.958 | 66.13 | 38.05 | 13.45 |
+- **Nested cross-validation grouped by test series.**
+  - *Outer loop:* five folds, stratified by the presence of an opening, so every test receives a prediction from a model that has not seen its series.
+  - *Inner loop:* Bayesian optimization, 50 trials, on a five-fold cross-validation that is also grouped by series.
+- **Six algorithms** (RF, GBRT, XGBoost, LightGBM, CatBoost, AdaBoost) in two formulations (data-driven; Eurocode 2-informed).
 
-For the 44 test slabs with openings, CatBoost gives R² = 0.890 and MAPE = 18.6%.
+Out-of-series performance of the selected model and of Eurocode 2:
+
+| Method | All tests: R² | RMSE (kN) | MAPE (%) | Slabs with openings: R² | RMSE (kN) | MAPE (%) |
+|---|---|---|---|---|---|---|
+| Eurocode 2 | 0.902 | 106.7 | 21.4 | 0.634 | 115.5 | 25.6 |
+| CatBoost, data-driven | 0.883 | 116.4 | 21.6 | 0.758 | 93.9 | 33.9 |
+| CatBoost, Eurocode 2-informed (selected) | 0.935 | 86.8 | 17.2 | 0.800 | 85.4 | 27.8 |
 
 ## Reproducing the analysis
 
 ```
-pip install pandas numpy scikit-learn xgboost lightgbm catboost optuna shap openpyxl matplotlib scipy
+pip install -r analysis/requirements.txt
 cd analysis
-for m in RF GBRT CatBoost XGBoost LightGBM AdaBoost; do python run_model.py $m 100; done
-python post.py          # Table 2, Figs. 4 and 5, metrics for slabs with openings
-python codes.py         # code and empirical benchmark on the same specimens
-python final_model.py   # final CatBoost model with named features
-python shap_rf.py       # SHAP analysis of the final model (Fig. 6)
-python figs23.py        # Figs. 2 and 3
+for m in RF GBRT XGBoost LightGBM CatBoost AdaBoost; do
+  python nested_cv.py $m 50 data     # data-driven formulation
+  python nested_cv.py $m 50 ec2      # Eurocode 2-informed formulation
+done
+python tables_figures.py             # Tables 2-3, Figs. 4-5, benchmark with series-bootstrap intervals
+python final_model.py CatBoost ec2 100
+python final_model.py CatBoost data 100
+python opening_effect.py CatBoost CatBoost_ec2
+python fig1.py; python fig2_fig3.py; python fig6.py
+python export_model.py results/final_CatBoost_ec2.json ../model.js
 ```
+
+All outputs are written to `analysis/results/`.
 
 ## Use and limitations
 
@@ -65,5 +71,5 @@ The model is intended for research and preliminary assessment within the range o
 
 ## License
 
-- Code (web application, Streamlit app and analysis scripts): MIT License, see `LICENSE`.
-- Data (`data/`) and the trained model: Creative Commons Attribution 4.0 International (CC BY 4.0). The test results were compiled from the published experimental studies cited in the manuscript; please cite the manuscript and the original sources when using the database.
+- Code: MIT License, see `LICENSE`.
+- Data and model: Creative Commons Attribution 4.0 International (CC BY 4.0). The test results were compiled from the published experimental studies cited in the manuscript. Please cite the manuscript and the original sources when using the database.
