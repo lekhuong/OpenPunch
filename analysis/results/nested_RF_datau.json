@@ -1,0 +1,82 @@
+{
+ "model": "RF",
+ "form": "datau",
+ "split": "grouped",
+ "trials": 50,
+ "params": [
+  {
+   "n_estimators": 300,
+   "max_depth": 21,
+   "min_samples_split": 2,
+   "min_samples_leaf": 1,
+   "max_features": 0.8964783976472279
+  },
+  {
+   "n_estimators": 200,
+   "max_depth": 28,
+   "min_samples_split": 3,
+   "min_samples_leaf": 1,
+   "max_features": 0.3911254465027356
+  },
+  {
+   "n_estimators": 450,
+   "max_depth": 28,
+   "min_samples_split": 3,
+   "min_samples_leaf": 1,
+   "max_features": 0.4044729762888814
+  },
+  {
+   "n_estimators": 300,
+   "max_depth": 27,
+   "min_samples_split": 3,
+   "min_samples_leaf": 1,
+   "max_features": 0.9755779259784034
+  },
+  {
+   "n_estimators": 450,
+   "max_depth": 28,
+   "min_samples_split": 3,
+   "min_samples_leaf": 1,
+   "max_features": 0.52872939228175
+  }
+ ],
+ "secs": 888.7839307785034,
+ "default_all": {
+  "R2": 0.8249642441743897,
+  "RMSE": 142.53658256964536,
+  "MAE": 78.18732122090996,
+  "MAPE": 26.327977170961187
+ },
+ "opt_all": {
+  "R2": 0.8415864096890365,
+  "RMSE": 135.59983884939035,
+  "MAE": 74.20734571553936,
+  "MAPE": 26.700783048146654
+ },
+ "opt_open": {
+  "R2": 0.6874695630385748,
+  "RMSE": 106.65950343472637,
+  "MAE": 78.04061094314223,
+  "MAPE": 50.136132954090854
+ },
+ "opt_solid": {
+  "R2": 0.8470948548576833,
+  "RMSE": 143.93035483008433,
+  "MAE": 72.93417862917217,
+  "MAPE": 18.917049237375256
+ },
+ "default_fold_MAE": [
+  79.35301121442662,
+  71.16944482927089,
+  120.40382605820105,
+  54.19872355422357,
+  65.34516572420635
+ ],
+ "opt_fold_MAE": [
+  80.3150266289047,
+  63.05385789052889,
+  108.9354424023302,
+  55.03649209869579,
+  62.34750780653586
+ ]
+}

@@ -1,0 +1,136 @@
+{
+ "model": "CatBoost",
+ "form": "ec2",
+ "trials": 20,
+ "params": {
+  "0": {
+   "iterations": 1400,
+   "learning_rate": 0.023810120497068248,
+   "depth": 6,
+   "l2_leaf_reg": 7.2264759846281095,
+   "subsample": 0.6883629003793732,
+   "bootstrap_type": "Bernoulli"
+  },
+  "1": {
+   "iterations": 900,
+   "learning_rate": 0.03963626685182379,
+   "depth": 7,
+   "l2_leaf_reg": 2.0248179429745883,
+   "subsample": 0.7492578697310115,
+   "bootstrap_type": "Bernoulli"
+  },
+  "2": {
+   "iterations": 1500,
+   "learning_rate": 0.026621809704298702,
+   "depth": 4,
+   "l2_leaf_reg": 8.509558502320386,
+   "subsample": 0.8726207990895034,
+   "bootstrap_type": "Bernoulli"
+  },
+  "3": {
+   "iterations": 1200,
+   "learning_rate": 0.019721610970574007,
+   "depth": 7,
+   "l2_leaf_reg": 3.9121416285496955,
+   "subsample": 0.6185801650879991,
+   "bootstrap_type": "Bernoulli"
+  },
+  "4": {
+   "iterations": 1400,
+   "learning_rate": 0.030651264672264845,
+   "depth": 5,
+   "l2_leaf_reg": 2.6109572183722,
+   "subsample": 0.6060513352255066,
+   "bootstrap_type": "Bernoulli"
+  },
+  "5": {
+   "iterations": 1000,
+   "learning_rate": 0.01607123851203988,
+   "depth": 5,
+   "l2_leaf_reg": 2.324672848950434,
+   "subsample": 0.7824279936868144,
+   "bootstrap_type": "Bernoulli"
+  },
+  "6": {
+   "iterations": 500,
+   "learning_rate": 0.039219848668413666,
+   "depth": 6,
+   "l2_leaf_reg": 5.467738528155034,
+   "subsample": 0.6222459273397666,
+   "bootstrap_type": "Bernoulli"
+  },
+  "7": {
+   "iterations": 1500,
+   "learning_rate": 0.023208087876900353,
+   "depth": 6,
+   "l2_leaf_reg": 4.4288892811416485,
+   "subsample": 0.6787388095332183,
+   "bootstrap_type": "Bernoulli"
+  },
+  "8": {
+   "iterations": 600,
+   "learning_rate": 0.05156575224250928,
+   "depth": 7,
+   "l2_leaf_reg": 1.912297411655673,
+   "subsample": 0.6444863462878239,
+   "bootstrap_type": "Bernoulli"
+  },
+  "9": {
+   "iterations": 1500,
+   "learning_rate": 0.024360669204656706,
+   "depth": 4,
+   "l2_leaf_reg": 9.208048696945822,
+   "subsample": 0.9360530879157444,
+   "bootstrap_type": "Bernoulli"
+  },
+  "12": {
+   "iterations": 1100,
+   "learning_rate": 0.02677674132182027,
+   "depth": 5,
+   "l2_leaf_reg": 1.8061719818704474,
+   "subsample": 0.8159302478254336,
+   "bootstrap_type": "Bernoulli"
+  },
+  "13": {
+   "iterations": 1500,
+   "learning_rate": 0.026621809704298702,
+   "depth": 4,
+   "l2_leaf_reg": 8.509558502320386,
+   "subsample": 0.8726207990895034,
+   "bootstrap_type": "Bernoulli"
+  },
+  "14": {
+   "iterations": 1000,
+   "learning_rate": 0.06161861295935754,
+   "depth": 7,
+   "l2_leaf_reg": 8.988306410230061,
+   "subsample": 0.6457028128499621,
+   "bootstrap_type": "Bernoulli"
+  },
+  "15": {
+   "iterations": 1100,
+   "learning_rate": 0.027851603228968607,
+   "depth": 5,
+   "l2_leaf_reg": 8.60211086271505,
+   "subsample": 0.7763073110240838,
+   "bootstrap_type": "Bernoulli"
+  },
+  "16": {
+   "iterations": 1100,
+   "learning_rate": 0.028869220380495747,
+   "depth": 7,
+   "l2_leaf_reg": 3.521358805467868,
+   "subsample": 0.6739417822102108,
+   "bootstrap_type": "Bernoulli"
+  },
+  "17": {
+   "iterations": 1200,
+   "learning_rate": 0.05570045682988821,
+   "depth": 7,
+   "l2_leaf_reg": 2.0841100100026098,
+   "subsample": 0.65714889101792,
+   "bootstrap_type": "Bernoulli"
+  }
+ },
+ "secs": 1758.2562892436981
+}

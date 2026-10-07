@@ -1,0 +1,107 @@
+{
+ "model": "LightGBM",
+ "form": "datau",
+ "split": "grouped",
+ "trials": 50,
+ "params": [
+  {
+   "n_estimators": 550,
+   "learning_rate": 0.07678411125179287,
+   "num_leaves": 14,
+   "max_depth": 11,
+   "min_child_samples": 7,
+   "subsample": 0.7528472744134856,
+   "colsample_bytree": 0.9818095760398207,
+   "reg_alpha": 1.6040263899952083,
+   "reg_lambda": 0.2935136129385049,
+   "subsample_freq": 1
+  },
+  {
+   "n_estimators": 400,
+   "learning_rate": 0.029220282929495894,
+   "num_leaves": 77,
+   "max_depth": 4,
+   "min_child_samples": 11,
+   "subsample": 0.7258857627267089,
+   "colsample_bytree": 0.8029158753421256,
+   "reg_alpha": 2.1602822148785235,
+   "reg_lambda": 0.008988729307866618,
+   "subsample_freq": 1
+  },
+  {
+   "n_estimators": 450,
+   "learning_rate": 0.09801949416916701,
+   "num_leaves": 12,
+   "max_depth": 3,
+   "min_child_samples": 5,
+   "subsample": 0.6687629886862185,
+   "colsample_bytree": 0.8951813394521246,
+   "reg_alpha": 0.0039494712560552495,
+   "reg_lambda": 4.434500112935892,
+   "subsample_freq": 1
+  },
+  {
+   "n_estimators": 550,
+   "learning_rate": 0.14248918053782691,
+   "num_leaves": 41,
+   "max_depth": 6,
+   "min_child_samples": 6,
+   "subsample": 0.7845985612290376,
+   "colsample_bytree": 0.732472381302753,
+   "reg_alpha": 0.005047336415097494,
+   "reg_lambda": 0.33643726968401844,
+   "subsample_freq": 1
+  },
+  {
+   "n_estimators": 600,
+   "learning_rate": 0.16349490632373226,
+   "num_leaves": 24,
+   "max_depth": 7,
+   "min_child_samples": 5,
+   "subsample": 0.7776710774722321,
+   "colsample_bytree": 0.8302313582405383,
+   "reg_alpha": 0.8116546193865973,
+   "reg_lambda": 0.9843955610725241,
+   "subsample_freq": 1
+  }
+ ],
+ "secs": 122.32711935043335,
+ "default_all": {
+  "R2": 0.8211456981220775,
+  "RMSE": 144.08296935478202,
+  "MAE": 76.71544107592337,
+  "MAPE": 25.108960887307617
+ },
+ "opt_all": {
+  "R2": 0.8736804119285486,
+  "RMSE": 121.08721910672857,
+  "MAE": 71.94326683178419,
+  "MAPE": 24.141744391438756
+ },
+ "opt_open": {
+  "R2": 0.5768849278446553,
+  "RMSE": 124.10310454019698,
+  "MAE": 75.37089454400632,
+  "MAPE": 38.554051370166604
+ },
+ "opt_solid": {
+  "R2": 0.8935912169649466,
+  "RMSE": 120.06877632058537,
+  "MAE": 70.80482674783248,
+  "MAPE": 19.354891983782284
+ },
+ "default_fold_MAE": [
+  86.29882188464998,
+  73.20728429494922,
+  103.23576069205615,
+  56.277326160725835,
+  62.703575203518184
+ ],
+ "opt_fold_MAE": [
+  69.12108574966368,
+  80.71859861827365,
+  94.02223029524617,
+  59.74024672153758,
+  56.641271180559144
+ ]
+}
