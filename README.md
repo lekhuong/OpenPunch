@@ -2,7 +2,7 @@
 
 This repository accompanies the manuscript
 
-> H.Q. Nguyen, X.H. Nguyen, Q.S. Nguyen, D.D. Le, K. Le-Nguyen. *Do ensemble models for punching shear transfer to new test series? Slabs with openings and a Eurocode 2-informed correction.*
+> H.Q. Nguyen, X.H. Nguyen, Q.S. Nguyen, D.D. Le, K. Le-Nguyen. *Transferability of machine-learning models for punching shear across test series: Eurocode 2-informed learning for flat slabs with openings.*
 
 It contains the experimental database, the analysis scripts and results, the final model and the web application.
 
