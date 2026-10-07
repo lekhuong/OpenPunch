@@ -5,6 +5,7 @@ matplotlib.use('Agg'); import matplotlib.pyplot as plt
 from prep import load, add_codes
 ORDER = ['CatBoost', 'GBRT', 'XGBoost', 'LightGBM', 'AdaBoost', 'RF']
 FORMS = [('data', '', 'Data-driven'), ('ec2', '_ec2', 'EC2-informed')]
+FORMS3 = [FORMS[0], ('datau', '_datau', 'Data-driven + perimeter ratio'), FORMS[1]]   # ablation: direct model with the EC2 perimeter ratio as an extra input
 A, M = load(); M = add_codes(M)
 def met(y, p):
     y = np.asarray(y, float); p = np.asarray(p, float); r = y / p
@@ -12,19 +13,19 @@ def met(y, p):
                 MAE=float(np.abs(y - p).mean()), MAPE=float(100 * np.mean(np.abs((y - p) / y))), ratio_mean=float(r.mean()), ratio_cov=float(r.std(ddof=1) / r.mean()))
 P, J = {}, {}
 for m in ORDER:
-    for f, suf, lab in FORMS:
+    for f, suf, lab in FORMS3:
         P[(m, f)] = pd.read_csv(f'oof_{m}{suf}.csv'); J[(m, f)] = json.load(open(f'nested_{m}{suf}.json'))
         assert (P[(m, f)].row754.values == M.row754.values).all()
 op = M.has_opening.values
 rows = []
 for m in ORDER:
-    for f, suf, lab in FORMS:
+    for f, suf, lab in FORMS3:
         d = P[(m, f)]; a = met(d.V_exp, d.V_opt); o = met(d.V_exp[op], d.V_opt[op])
         rows.append(dict(model=m, form=lab, R2=a['R2'], RMSE=a['RMSE'], MAE=a['MAE'], MAPE=a['MAPE'], MAE_fold_sd=float(np.std(J[(m, f)]['opt_fold_MAE'], ddof=1)),
                          oR2=o['R2'], oRMSE=o['RMSE'], oMAE=o['MAE'], oMAPE=o['MAPE']))
 T2 = pd.DataFrame(rows); T2.to_csv('table2.csv', index=False); print(T2.round(3).to_string())
 best = {lab: T2[T2.form == lab].sort_values('MAE').iloc[0].model for _, _, lab in FORMS}
-sel = T2.sort_values('MAE').iloc[0]; print('best per form', best, 'selected overall', sel.model, sel.form)
+sel = T2[T2.form.isin([lab for _, _, lab in FORMS])].sort_values('MAE').iloc[0]   # selection among the two formulations defined in advance; print('best per form', best, 'selected overall', sel.model, sel.form)
 json.dump({'best': best, 'selected': [sel.model, sel.form]}, open('selection.json', 'w'))
 # Table 3: codes vs best models, all specimens / slabs with openings / adjacent / at distance, series bootstrap CI
 rng = np.random.default_rng(42)
@@ -48,24 +49,28 @@ for nm, v in T3.items():
 pd.DataFrame({'row754': M.row754, 'series': ser, 'has_opening': op, 'Vu': y, **{k: v for k, v in cands.items()}}).to_csv('benchmark_predictions.csv', index=False)
 # Fig. 4: out-of-series MAE by model and formulation (mean and SD over outer folds)
 plt.rcParams.update({'font.family': 'DejaVu Sans', 'font.size': 9})
-fig, ax = plt.subplots(figsize=(6.8, 3.6)); x = np.arange(len(ORDER)); w = 0.36
-for j, (f, suf, lab) in enumerate(FORMS):
+fig, ax = plt.subplots(figsize=(6.8, 3.6)); x = np.arange(len(ORDER)); w = 0.27
+for j, (f, suf, lab) in enumerate(FORMS3):
     v = np.array([J[(m, f)]['opt_fold_MAE'] for m in ORDER])
-    ax.bar(x + (j - 0.5) * w, v.mean(1), w, yerr=v.std(1, ddof=1), capsize=3, color=['#e0913a', '#1e5bb8'][j], label=lab, error_kw=dict(lw=0.8))
+    ax.bar(x + (j - 1) * w, v.mean(1), w, yerr=v.std(1, ddof=1), capsize=2.5, color=['#e0913a', '#9bb7e0', '#1e5bb8'][j], label=lab, error_kw=dict(lw=0.8))
 ax.axhline(np.abs(M.Vu_EC2 - M.Pu_kN).mean(), color='0.3', ls='--', lw=0.9, label='Eurocode 2')
 ax.set_xticks(x); ax.set_xticklabels(ORDER); ax.set_ylabel('MAE on held-out series (kN)'); ax.legend(frameon=False, fontsize=8)
 ax.grid(axis='y', alpha=0.3, lw=0.4); fig.tight_layout(); fig.savefig('fig4_models.png', dpi=300, bbox_inches='tight'); plt.close(fig)
-# Fig. 5: predicted vs measured, EC2 and best model of each formulation
+# Fig. 5: predicted vs measured, EC2 and best model of each formulation; lower row: slabs with openings only
 vmax = 1.04 * max(y.max(), max(v.max() for v in cands.values()))
-fig, axs = plt.subplots(1, 3, figsize=(11, 4))
-for ax, nm, tag in zip(axs, ['Eurocode 2', f"{best['Data-driven']} (data-driven)", f"{best['EC2-informed']} (EC2-informed)"], 'abc'):
+vop = 1.08 * max(y[op].max(), max(v[op].max() for v in cands.values()))
+fig, axs = plt.subplots(2, 3, figsize=(11, 7.6))
+for j, (nm, tag) in enumerate(zip(['Eurocode 2', f"{best['Data-driven']} (data-driven)", f"{best['EC2-informed']} (EC2-informed)"], 'abc')):
     p = cands[nm]
-    ax.scatter(y[~op], p[~op], s=8, c='#e07b24', edgecolors='none', label='Slabs without openings')
-    ax.scatter(y[op], p[op], s=13, marker='^', c='#7a1f1f', edgecolors='none', label='Slabs with openings')
-    ax.plot([0, vmax], [0, vmax], 'k--', lw=0.8); ax.set_xlim(0, vmax); ax.set_ylim(0, vmax); ax.set_aspect('equal')
-    a = T3[nm]['all']; b = T3[nm]['openings']
-    ax.text(0.96, 0.05, f"All: $R^2$ = {a['R2']:.3f}, MAPE = {a['MAPE']:.1f}%\nOpenings: $R^2$ = {b['R2']:.3f}, MAPE = {b['MAPE']:.1f}%",
-            transform=ax.transAxes, ha='right', va='bottom', fontsize=7.5, bbox=dict(fc='white', ec='0.6', lw=0.5))
-    ax.set_title(f'({tag}) {nm}', fontsize=10); ax.set_xlabel(r'Measured $V_u$ (kN)'); ax.set_ylabel(r'Predicted $V_u$ (kN)'); ax.grid(alpha=0.3, lw=0.4)
-axs[0].legend(loc='upper left', fontsize=7, frameon=False)
+    for i, (ax, lim) in enumerate(zip(axs[:, j], (vmax, vop))):
+        if i == 0:
+            ax.scatter(y[~op], p[~op], s=8, c='#e07b24', edgecolors='none', label='Slabs without openings')
+        ax.scatter(y[op], p[op], s=13, marker='^', c='#7a1f1f', edgecolors='none', label='Slabs with openings')
+        ax.plot([0, lim], [0, lim], 'k--', lw=0.8); ax.set_xlim(0, lim); ax.set_ylim(min(0, p[op].min() * 1.1) if i else 0, lim); ax.set_aspect('equal' if i == 0 else 'auto')
+        a = T3[nm]['all']; b = T3[nm]['openings']
+        txt = f"All: $R^2$ = {a['R2']:.3f}, MAPE = {a['MAPE']:.1f}%" if i == 0 else f"Openings: $R^2$ = {b['R2']:.3f}, MAPE = {b['MAPE']:.1f}%"
+        ax.text(0.96, 0.05, txt, transform=ax.transAxes, ha='right', va='bottom', fontsize=7.5, bbox=dict(fc='white', ec='0.6', lw=0.5))
+        ax.set_title(f'({tag}{i + 1}) {nm}' + (' – slabs with openings' if i else ''), fontsize=9.5)
+        ax.set_xlabel(r'Measured $V_u$ (kN)'); ax.set_ylabel(r'Predicted $V_u$ (kN)'); ax.grid(alpha=0.3, lw=0.4)
+axs[0, 0].legend(loc='upper left', fontsize=7, frameon=False)
 fig.tight_layout(); fig.savefig('fig5_pred.png', dpi=300, bbox_inches='tight'); plt.close(fig)
